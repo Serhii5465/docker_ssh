@@ -4,7 +4,16 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: jenkins_test
-    image: jenkins_test
+      args:
+        - USER_NAME=$USER_NAME
+        - SSH_PORT=$SSH_PORT
+        - USER_PASS=$USER_PASS
+    container_name: container_test
+    image: container_test
     ports:
-      - 32450:22
+      - $SSH_PORT:$SSH_PORT/tcp
+    volumes:
+      - type: bind
+        source: ~/.ssh/docker_ssh_test/id_rsa.pub
+        target: /home/$USER_NAME/.ssh/authorized_keys
+        read_only: true
