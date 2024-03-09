@@ -8,6 +8,7 @@ services:
         - USER_NAME=$USER_NAME
         - SSH_PORT=$SSH_PORT
         - USER_PASS=$USER_PASS
+        - USER_ID=$USER_ID
     container_name: container_test
     image: container_test
     ports:
