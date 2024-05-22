@@ -19,17 +19,20 @@ spec:
       - name: auth-key-vol
         secret:
           secretName: docker-ssh-credentials
-          # defaultMode: 384
       containers:
         - name: docker-ssh-container
           image: 192.168.56.12:43210/docker_ssh
+          command: ['/bin/sh', '-c', 'cp --verbose /tmp/secret /home/raisnet/.ssh/authorized_keys; 
+                    chown raisnet:raisnet /home/raisnet/.ssh/authorized_keys; 
+                    chmod 600 /home/raisnet/.ssh/authorized_keys; 
+                    /usr/sbin/sshd -D']
           ports:
           - containerPort: 32450
           volumeMounts:
           - name: auth-key-vol
-            mountPath: "/home/raisnet/.ssh/authorized_keys"
+            mountPath: /tmp/secret
             subPath: pubkey
-        
+
 ---
 apiVersion: v1
 kind: Service
@@ -41,6 +44,7 @@ spec:
   selector:
     app: docker-ssh
   ports:
-  - protocol: TCP
+  - name: client
+    protocol: TCP
     port: 32450
-    targetPort: 32450
+    nodePort: 32450
