@@ -1,6 +1,5 @@
-version: '3.8'
 services:
-  app:
+  ssh_service:
     build:
       context: .
       dockerfile: Dockerfile
@@ -9,12 +8,12 @@ services:
         - SSH_PORT=$SSH_PORT
         - USER_PASS=$USER_PASS
         - USER_ID=$USER_ID
-    container_name: docker-ssh
-    image: docker-ssh:0.0.2
+    container_name: docker_ssh
+    image: docker_ssh:0.2
     ports:
       - $SSH_PORT:$SSH_PORT/tcp
-    # volumes:
-    #   - type: bind
-    #     source: ~/.ssh/docker_ssh_test/id_rsa.pub
-    #     target: /home/$USER_NAME/.ssh/authorized_keys
-    #     read_only: true
+    volumes:
+      - type: bind
+        source: ~/.ssh/hosts/docker_ssh_container/id_rsa.pub
+        target: /home/${USER_NAME}/.ssh/authorized_keys
+        read_only: true
