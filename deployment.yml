@@ -22,9 +22,12 @@ spec:
       containers:
         - name: docker-ssh-container
           image: 192.168.56.12:43210/docker_ssh
-          command: ['/bin/sh', '-c', 'cp --verbose /tmp/secret /home/raisnet/.ssh/authorized_keys; 
-                    chown raisnet:raisnet /home/raisnet/.ssh/authorized_keys; 
-                    chmod 600 /home/raisnet/.ssh/authorized_keys; 
+          env:
+            - name: USER_NAME
+              value: "raisnet"
+          command: ['/bin/sh', '-c', 'cp --verbose /tmp/secret /home/${USER_NAME}/.ssh/authorized_keys; 
+                    chown ${USER_NAME}:${USER_NAME} /home/${USER_NAME}/.ssh/authorized_keys; 
+                    chmod 600 /home/${USER_NAME}/.ssh/authorized_keys; 
                     /usr/sbin/sshd -D']
           ports:
           - containerPort: 32450
