@@ -1,35 +1,46 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: docker-ssh
+  name: docker-ssh-deployment
+  namespace: docker-ssh-namespace
   labels:
-    app: docker-ssh-app
+    app: docker-ssh
 spec:
+  replicas: 1
   selector:
     matchLabels:
-      app: docker-ssh-app
+      app: docker-ssh
   template:
     metadata:
       labels:
-        app: docker-ssh-app
+        app: docker-ssh
     spec:
+      volumes:
+      - name: auth-key-vol
+        secret:
+          secretName: docker-ssh-credentials
+          # defaultMode: 384
       containers:
-      - name: docker-ssh
-        image: 192.168.56.12:43210/docker-ssh:0.0.2
-        ports:
-        - containerPort: 32450
-
+        - name: docker-ssh-container
+          image: 192.168.56.12:43210/docker_ssh
+          ports:
+          - containerPort: 32450
+          volumeMounts:
+          - name: auth-key-vol
+            mountPath: "/home/raisnet/.ssh/authorized_keys"
+            subPath: pubkey
+        
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: docker-ssh
+  name: docker-ssh-deployment
+  namespace: docker-ssh-namespace
 spec:
   type: NodePort
   selector:
-    app: docker-ssh-app
+    app: docker-ssh
   ports:
-    - name: client
-      protocol: TCP
-      port: 32450
-      nodePort: 32450
+  - protocol: TCP
+    port: 32450
+    targetPort: 32450
