@@ -21,10 +21,11 @@ spec:
           secretName: docker-ssh-credentials
       containers:
         - name: docker-ssh-container
-          image: 192.168.56.12:43210/docker_ssh
+          # image: 192.168.56.12:43210/docker_ssh
+          image: serhiiartiukh5465/docker_ssh
           env:
             - name: USER_NAME
-              value: "raisnet"
+              value: "ubuntu"
           command: ['/bin/sh', '-c', 'cp --verbose /tmp/secret /home/${USER_NAME}/.ssh/authorized_keys; 
                     chown ${USER_NAME}:${USER_NAME} /home/${USER_NAME}/.ssh/authorized_keys; 
                     chmod 600 /home/${USER_NAME}/.ssh/authorized_keys; 
