@@ -17,3 +17,11 @@ services:
         source: ~/.ssh/hosts/docker_ssh_local/id_rsa.pub
         target: /home/${USER_NAME}/.ssh/authorized_keys
         read_only: true
+    deploy:
+      resources:
+        limits:
+          cpus: '0.6'
+          memory: '512M'
+        reservations:
+          cpus: '0.3'
+          memory: '256M'
