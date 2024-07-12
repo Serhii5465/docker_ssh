@@ -21,7 +21,6 @@ spec:
           secretName: docker-ssh-credentials
       containers:
         - name: docker-ssh-container
-          # image: 192.168.56.12:43210/docker_ssh
           image: serhiiartiukh5465/docker_ssh
           env:
             - name: USER_NAME
@@ -36,7 +35,13 @@ spec:
           - name: auth-key-vol
             mountPath: /tmp/secret
             subPath: pubkey
-
+          resources:
+            limits:
+              memory: 512Mi
+              cpu: "0.6"
+            requests:
+              memory: 256Mi
+              cpu: "0.3"
 ---
 apiVersion: v1
 kind: Service
