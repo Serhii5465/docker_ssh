@@ -40,20 +40,33 @@ pipeline {
         stage('Push to DockerHub'){
             steps{
                 script{
-                    withDockerRegistry(credentialsId: 'dockerhub-token') {
-                        sh returnStatus: true,
-                        script: "docker push ${env.DOCKER_TAG_IMAGE}"
+                    withCredentials([usernamePassword(credentialsId: 'dockerhub-token', passwordVariable: 'pass', usernameVariable: 'username')]) {
+                        sh('echo ${pass} | docker login -u $username --password-stdin')
+                        sh "docker push ${env.DOCKER_TAG_IMAGE}"
                     }
+                }
+            }
+            post {
+                always {
+                    sh "docker logout"
                 }
             }
         }
 
-        // stage('Deploy on Kubernetes'){
-        //     steps{
-        //         script {
+        stage('Deploy on Kubernetes'){
+            steps{
+                script {
+                    withKubeConfig(credentialsId: 'microk8s-jenkins-config') {
+                        sh "kubectl apply -f deployment.yml"
+                    }
+                }
+            }
+        }
+    }
 
-        //         }
-        //     }
-        // }
+    post {
+        success {
+            sh "docker image rm ${env.DOCKER_TAG_IMAGE} && docker buildx prune -f"
+        }
     }
 }
