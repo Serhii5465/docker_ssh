@@ -56,8 +56,7 @@ resources:
 
 Service:
 ```
-type: NodePort
+type: LoadBalancer
 protocol: TCP
 port: 32450
-nodePort: 32450
 ```

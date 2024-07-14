@@ -49,7 +49,7 @@ metadata:
   name: docker-ssh-deployment
   namespace: docker-ssh-namespace
 spec:
-  type: NodePort
+  type: LoadBalancer
   selector:
     app: docker-ssh
   ports:
