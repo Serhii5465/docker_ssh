@@ -6,7 +6,7 @@ The repository contains configuration files for [local deployment](https://githu
 
 By default installed sudo and git.
 
-Based image - [Ubuntu 22.04](https://hub.docker.com/layers/library/ubuntu/22.04/images/sha256-2af372c1e2645779643284c7dc38775e3dbbc417b2d784a27c5a9eb784014fb8?context=explore).
+Based image - [Ubuntu 24.04](https://hub.docker.com/layers/library/ubuntu/24.04/images/sha256-3963c438d67a34318a3672faa6debd1dfff48e5d52de54305988b932c61514ca?context=explore).
 
 Build parameters:
 ```
@@ -34,21 +34,30 @@ target: /home/${USER_NAME}/.ssh/authorized_keys
 ```
 
 ## K8S deployment
-Deploy parameters:
+For binding SSH pub key to pod using Secret. Secret setup: 
+```
+kubectl create namespace docker-ssh-namespace
+kubectl create secret generic docker-ssh-credentials --from-file=pubkey="path_to_ssh_cred"/id_rsa.pub -n docker-ssh-namespace
+```
+
+Deployment:
 ```
 namespace: docker-ssh-namespace
 label: app=docker-ssh
+replicas: 1
+resources:
+    limits:
+        memory: 512Mi
+        cpu: "0.6"
+    requests:
+        memory: 256Mi
+        cpu: "0.3"
 ```
 
-Service parameters:
+Service:
 ```
 type: NodePort
 protocol: TCP
 port: 32450
 nodePort: 32450
-```
-
-For binding SSH pub key to pod using Secret. Secret setup: 
-```
-kubectl create secret generic docker-ssh-credentials --from-file=pubkey="path_to_ssh_cred"/id_rsa.pub -n docker-ssh-namespace
 ```
